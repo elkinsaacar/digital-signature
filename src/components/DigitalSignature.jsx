@@ -2,10 +2,14 @@
 import React, { useState } from "react";
 import SignatureCanvas from 'react-signature-canvas';
 import Pdf from "react-to-pdf";
+import { getBrowserWidth, getBrowserSize } from './helpers/utils';
+import siteProperties from './properties/site';
 
 const refPDF = React.createRef();
 
 const DigitalSignature = () => {
+
+    const browserSize = getBrowserSize(getBrowserWidth(), siteProperties.breakpoints);
 
     const [trimmedDataURL, setTrimmedDataURL] = useState('');
     let signaturePad = {};
@@ -51,21 +55,26 @@ const DigitalSignature = () => {
 
     return(
         <>
+            {/* --browserSize--{browserSize}-- */}
             { !generarPDF ?
                     (
                         <>
+                            <br/><div>Acá registre su firma</div><br/>
                             <SignatureCanvas penColor='red'  
                                 canvasProps={{width: 500, height: 200, style:{ border: '1px solid #000000'} }} 
                                 ref={(ref) => { signaturePad = ref }} />
-                            <br/>
-                            <button style={stylesButtonTrim} onClick={trimSignature}> Recortar </button>
-                            <br/>
-                            <button style={stylesButtonRestore} onClick={resetSignature}> Restaurar </button>
-                            <br/>
-                            {trimmedDataURL ? <img style={stylesImageTrim} src={trimmedDataURL} /> : null}
-
                             <br/><br/>
-                            <button style={stylesButtonRestore} onClick={createPDF}> Generar PDF </button>
+                            <button style={stylesButtonTrim} onClick={trimSignature}> Obtener Firma </button>
+                            <br/><br/>
+                            <button style={stylesButtonRestore} onClick={resetSignature}> Restaurar Firma </button>
+                            <br/><br/>
+                            {trimmedDataURL ? <>
+                                                <img style={stylesImageTrim} src={trimmedDataURL} />
+                                                <br/><br/>
+                                                <button style={stylesButtonRestore} onClick={createPDF}> Vista previa PDF </button>
+                                            </> : null}
+
+                            
                             <br/><br/>
                         </>
                     )
@@ -81,7 +90,7 @@ const DigitalSignature = () => {
                     <button style={stylesButtonRestore} onClick={restoreForm}> Regresar </button>
                     <br/><br/>
                     <Pdf targetRef={refPDF} filename="post.pdf">
-                        {({ toPdf }) => <button onClick={toPdf}>Capture as PDF</button>}
+                        {({ toPdf }) => <button onClick={toPdf}>Generar PDF</button>}
                     </Pdf>
                 </>
             }
